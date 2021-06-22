@@ -5,7 +5,9 @@ using Mirror;
 
 public class Unit : NetworkBehaviour
 {
+    [SerializeField] private Health health = null;
     [SerializeField] private UnitMovement unitMovement = null;
+    [SerializeField] private Targeter targeter = null;
     [SerializeField] private UnityEvent onSelected = null;
     [SerializeField] private UnityEvent onDeselected = null;
     public static event Action<Unit> ServerOnUnitSpawned;
@@ -18,16 +20,29 @@ public class Unit : NetworkBehaviour
         return unitMovement;
     }
 
+    public Targeter GetTargeter()
+    {
+        return targeter;
+    }
+
     #region Server
 
     public override void OnStartServer()
     {
         ServerOnUnitSpawned?.Invoke(this);
+        health.ServerOnDie += HandleServerOnDie;
     }
 
     public override void OnStopServer()
     {
         ServerOnUnitDespawned?.Invoke(this);
+        health.ServerOnDie -= HandleServerOnDie;
+    }
+
+    [Server]
+    private void HandleServerOnDie()
+    {
+        NetworkServer.Destroy(gameObject);
     }
 
     #endregion
@@ -54,18 +69,14 @@ public class Unit : NetworkBehaviour
         onDeselected?.Invoke();
     }
 
-    public override void OnStartClient()
+    public override void OnStartAuthority()
     {
-        if (!isClientOnly || !hasAuthority)
-        {
-            return;
-        }
         AuthorityOnUnitSpawned?.Invoke(this);
     }
 
     public override void OnStopClient()
     {
-        if (!isClientOnly || !hasAuthority)
+        if (!hasAuthority)
         {
             return;
         }

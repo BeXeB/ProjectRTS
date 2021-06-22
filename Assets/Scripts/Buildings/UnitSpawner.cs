@@ -4,6 +4,7 @@ using Mirror;
 
 public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
 {
+    [SerializeField] private Health health = null;
     [SerializeField] private GameObject unitPrefab;
     [SerializeField] private Transform unitSpawnPoint;
 
@@ -15,6 +16,22 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
     {
         GameObject unitInstance = Instantiate(unitPrefab, unitSpawnPoint.position, unitSpawnPoint.rotation);
         NetworkServer.Spawn(unitInstance, connectionToClient);
+    }
+
+    public override void OnStartServer()
+    {
+        health.ServerOnDie += HandleServerOnDie;
+    }
+
+    public override void OnStopServer()
+    {
+        health.ServerOnDie -= HandleServerOnDie;
+    }
+
+    [Server]
+    private void HandleServerOnDie()
+    {
+        //NetworkServer.Destroy(gameObject);
     }
 
     #endregion
