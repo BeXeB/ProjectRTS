@@ -54,8 +54,8 @@ public class UnitMovement : NetworkBehaviour
         agent.ResetPath();
     }
 
-    [Command]
-    public void CmdMove(Vector3 position)
+    [Server]
+    public void ServerMove(Vector3 position)
     {
         targeter.ClearTarget();
 
@@ -65,6 +65,12 @@ public class UnitMovement : NetworkBehaviour
         }
 
         agent.SetDestination(hit.position);
+    }
+
+    [Command]
+    public void CmdMove(Vector3 position)
+    {
+        ServerMove(position);
     }
 
     #endregion
