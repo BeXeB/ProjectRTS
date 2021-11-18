@@ -38,9 +38,9 @@ public class GameOverHandler : NetworkBehaviour
             return;
         }
 
-        int winnerId = bases[0].connectionToClient.connectionId;
+        string winnerName = bases[0].connectionToClient.identity.GetComponent<RTSPlayer>().GetDisplayName();
 
-        RpcGameOver($"Player {winnerId}");
+        RpcGameOver(winnerName);
 
         ServerOnGameOver?.Invoke();
     }

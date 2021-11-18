@@ -23,16 +23,12 @@ public class BuildingButton : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         mainCamera = Camera.main;
         icon.sprite = building.GetIcon();
         priceText.text = building.GetPrice().ToString();
+        player = NetworkClient.connection.identity.GetComponent<RTSPlayer>();
         buildingCollider = building.GetComponent<BoxCollider>();
     }
 
     private void Update()
     {
-        if (player == null)
-        {
-            player = NetworkClient.connection.identity.GetComponent<RTSPlayer>();
-        }
-
         if (buildingPreviewInstance == null)
         {
             return;
@@ -87,7 +83,7 @@ public class BuildingButton : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         }
 
         buildingPreviewInstance.transform.position = hit.point;
-    
+
         if (!buildingPreviewInstance.activeSelf)
         {
             buildingPreviewInstance.SetActive(true);

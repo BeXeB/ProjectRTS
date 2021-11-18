@@ -21,6 +21,7 @@ public class UnitSelectionHandler : MonoBehaviour
         Unit.AuthorityOnUnitDespawned += HandleAuthorityHandleUnitDespawned;
 
         GameOverHandler.ClientOnGameOver += HandleClientOnGameOver;
+        player = NetworkClient.connection.identity.GetComponent<RTSPlayer>();
     }
 
     private void OnDestroy()
@@ -30,11 +31,6 @@ public class UnitSelectionHandler : MonoBehaviour
 
     private void Update()
     {
-        if (player == null)
-        {
-            player = NetworkClient.connection.identity.GetComponent<RTSPlayer>();
-        }
-
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             StartSelectionArea();
